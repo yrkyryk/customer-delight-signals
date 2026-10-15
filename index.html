@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>고객 감동 측정 리포트</title>
+<meta name="description" content="아마존 리뷰 930만 명 분석(PART 01)과 고객 감동 모니터링 Tableau 대시보드(PART 02)">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#fbfaf7; --paper:#ffffff; --ink:#1b1b1a; --muted:#6b6a66; --line:#e6e3dc;
+  --blue:#2a78d6; --pink:#d4537e; --pink-pale:#fbeaf0; --pink-line:#f4c0d1; --green:#2a9d8f; --amber:#c98a1b; --grey:#8c8c8c;
+  --card:#f3f2ee;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151514; --paper:#1d1d1b; --ink:#ecebe7; --muted:#a3a19b; --line:#33322f;
+    --card:#232320; --pink-pale:#3a2129; --pink-line:#6b3346;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151514; --paper:#1d1d1b; --ink:#ecebe7; --muted:#a3a19b; --line:#33322f; --card:#232320; --pink-pale:#3a2129; --pink-line:#6b3346;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Malgun Gothic",system-ui,sans-serif;
+  font-size:17px;line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased}
+a{color:var(--blue)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:18px;align-items:center;height:52px;overflow-x:auto;white-space:nowrap;font-size:14px;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav a{color:var(--muted);text-decoration:none}
+nav a:hover{color:var(--ink)}
+nav b{margin-right:auto;font-size:15px}
+header{padding:72px 0 40px}
+.kicker{font-size:14px;letter-spacing:.06em;color:var(--pink);font-weight:700}
+h1{font-size:clamp(34px,6vw,56px);line-height:1.15;margin:10px 0 18px;letter-spacing:-.02em}
+.lead{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:780px;margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.btn{display:inline-block;padding:11px 18px;border-radius:10px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+section{padding:56px 0;border-top:1px solid var(--line)}
+.part{padding:44px 0 8px;border-top:3px solid var(--ink)}
+.part .label{font-size:14px;font-weight:800;letter-spacing:.08em;color:var(--pink)}
+.part h2{font-size:clamp(28px,4.4vw,40px)}
+h2{font-size:clamp(24px,3.4vw,32px);line-height:1.3;margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 28px}
+h3{font-size:19px;margin:0 0 6px}
+h4{font-size:16px;margin:26px 0 8px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;color:#fff;vertical-align:3px;margin-left:8px}
+.problem{background:var(--pink-pale);border:1px solid var(--pink-line);border-radius:14px;padding:22px 24px;font-size:19px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{background:var(--card);border-radius:14px;padding:20px 22px}
+.card p{margin:6px 0 0;color:var(--muted);font-size:15.5px}
+.card ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:15.5px}
+figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;overflow:hidden}
+figure img{display:block;width:100%;height:auto}
+figcaption{font-size:14px;color:#6b6a66;margin-top:8px}
+.figs{display:grid;gap:16px;margin-top:16px}
+.qbox{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 18px;background:var(--card);border-radius:14px;padding:20px 22px;font-size:16px}
+.qbox dt{color:var(--muted);font-weight:700;font-size:14px;padding-top:2px}
+.qbox dd{margin:0}
+.concl{border-left:4px solid var(--ink);background:var(--paper);padding:16px 20px;border-radius:8px;margin-top:18px}
+.concl b.k{display:block;font-size:13px;color:var(--muted);letter-spacing:.05em;margin-bottom:4px}
+.num{font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:6px 10px}
+details{margin-top:14px}
+summary{cursor:pointer;color:var(--blue);font-weight:600;font-size:15px}
+.note{font-size:14.5px;color:var(--muted);margin-top:14px}
+.warn{border-left:4px solid var(--amber);background:var(--card);padding:14px 18px;border-radius:8px;font-size:15.5px;margin:20px 0}
+.viz{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--paper);margin-top:16px}
+.viz iframe{display:block;width:100%;height:860px;border:0}
+.hypnav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.hypnav a{font-size:14px;text-decoration:none;padding:4px 12px;border-radius:999px;background:var(--card);color:var(--ink)}
+.log li{margin:8px 0}
+footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+@media (max-width:760px){
+  body{font-size:16px}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .qbox{grid-template-columns:1fr}
+  .viz iframe{height:620px}
+  header{padding:44px 0 28px}
+}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <b>고객 감동 측정</b>
+  <a href="#problem">문제</a><a href="#frame">지표·여정</a><a href="#data">데이터</a><a href="#h1">H1</a><a href="#h2">H2</a>
+  <a href="#h3">H3</a><a href="#h4">H4</a><a href="#summary">종합</a><a href="#part02">대시보드</a><a href="#limits">한계</a><a href="#ai">AI 사용</a>
+</div></nav>
+
+<header><div class="wrap">
+  <div class="kicker">새싹캠퍼스 최종 프로젝트 · 분석 리포트 + Tableau 대시보드</div>
+  <h1>고객의 감동은<br>측정할 수 있을까?</h1>
+  <p class="lead">아마존 리뷰 930만 명으로 어떤 경험과 마음이 고객을 다시 돌아오게 하는지 검증하고(PART 01),
+    그 결과로 고객의 마음을 매일 보는 모니터링 대시보드를 만들었다(PART 02).</p>
+  <div class="btns">
+    <a class="btn primary" id="dashBtn" href="#part02">대시보드 보기</a>
+    <a class="btn" href="#h1">분석 결과 보기</a>
+    <a class="btn" id="slidesBtn" href="#" hidden>발표 슬라이드</a>
+  </div>
+</div></header>
+
+<main>
+<section id="problem"><div class="wrap">
+  <h2>문제와 성공 기준</h2>
+  <p class="sub">누가, 어떤 상황에서, 무엇이 문제인가</p>
+  <div class="problem">이커머스 운영자는 <b>어떤 고객이 가치가 높은지</b> 판단하고, <b>어떤 경험이 고객을 다시 돌아오게 하거나
+    떠나게 하는지</b> 확인해 대응하고 싶어 한다. 그런데 리뷰는 주문의 일부에만 남고 별점은 대부분 높아서,
+    <b>별점과 리뷰만으로는 고객의 마음이 움직였는지, 떠나려는 신호가 있는지 알 수 없다.</b></div>
+  <div class="card" style="margin-top:18px"><h3>성공 기준</h3>
+    <p><b>리뷰 분석으로 떠나갈 고객과 돌아올 고객을 가르는 신호가 나오면 성공.</b> 같은 별점 안에서 리뷰의 길이, 경험, 감정 세기를
+      가설 4개로 판정하고, 미리 정한 기준(<b>H1·H2·H4 p&lt;0.05</b>, 표본이 작은 H3 p&lt;0.15)을 넘은 것만 신호로 인정한다.</p>
+    <p><b>결과:</b> 리뷰 신호로 고객을 나누면 하위 10%는 6.4%, 상위 10%는 11.6%만 다시 돌아온다 (전체 9.5%).
+      찾은 신호는 PART 02 대시보드에서 매일 쓴다.</p></div>
+</div></section>
+
+<section id="frame"><div class="wrap">
+  <h2>메트릭 하이라키와 고객 여정</h2>
+  <p class="sub">감동은 매출로 가는 길의 한가운데 있고, 배송·사용·문제 해결 단계에서 생긴다</p>
+  <div class="grid2">
+    <figure><img src="assets/metric_hierarchy.png" alt="메트릭 하이라키: 매출과 고객가치 아래 고객 수와 LTV, LTV 아래 재구매·유지, 그 아래 감동(도달률, 강도), 그 아래 배송·회복·제품 경험과 각 측정 지표"
+      loading="lazy"><figcaption>메트릭 하이라키. 감동 도달률은 대시보드의 긍정 울림 비율, 감동 강도는 설문 마음 세기로 잰다.</figcaption></figure>
+    <figure><img src="assets/customer_journey.png" alt="고객 여정: 유입, 탐색, 구매, 배송, 사용, 문제와 회복을 거쳐 배송·제품·회복 감동이 생기고 재구매와 추천, 고객가치 증가로 이어진다"
+      loading="lazy"><figcaption>고객 여정. 배송, 사용, 문제와 회복에서 생긴 감동이 재구매와 추천으로 이어진다.</figcaption></figure>
+  </div>
+</div></section>
+
+<div class="wrap part"><div class="label">PART 01</div><h2>아마존 리뷰 데이터 분석</h2>
+  <p class="sub">같은 별점끼리 비교하며 별점 → 리뷰 길이 → 경험 → 감정 순서로 좁혀 갔다</p>
+  <div class="hypnav"><a href="#data">데이터</a><a href="#h1">H1 별점</a><a href="#h2">H2 길이</a><a href="#h3">H3 경험</a><a href="#h4">H4 감정</a><a href="#summary">종합</a></div>
+</div>
+
+<section id="data"><div class="wrap">
+  <h2>데이터와 분석 범위</h2>
+  <p class="sub"><a href="https://amazon-reviews-2023.github.io/">Amazon Reviews 2023</a> (UCSD McAuley Lab) · 리뷰 ~2023년 3월, 첫 리뷰 기준 ~2022년 3월까지</p>
+  <div class="grid4">
+    <div class="card"><h3>Grocery</h3><p>식료품. 지속적으로 소비해 카테고리 안 구매 빈도가 매우 높은 고빈도 필수 소모품</p></div>
+    <div class="card"><h3>Fashion</h3><p>의류. 계절과 트렌드에 따라 같은 카테고리 안 다회 구매가 활발한 취향 중심 영역</p></div>
+    <div class="card"><h3>Appliances</h3><p>가전. 구매 주기가 길고 단가가 높아 재구매율이 낮은 대표 내구재</p></div>
+    <div class="card"><h3>All Beauty</h3><p>뷰티. 주기적으로 소진되고 브랜드 충성도와 개인화가 강한 영역</p></div>
+  </div>
+  <p class="note">카테고리 선택 근거: 고빈도 필수재부터 저빈도 내구재까지 성격이 대비되는 카테고리를 두루 포함해, 기본 재구매율이 달라도
+    같은 패턴이 나오는지 확인한다.</p>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="tablewrap"><table>
+      <tr><th>카테고리</th><th class="r">첫 리뷰 고객</th><th class="r">기준 행동률</th></tr>
+      <tr><td>Grocery</td><td class="r">5,551,970</td><td class="r">14.72%</td></tr>
+      <tr><td>Fashion</td><td class="r">1,814,755</td><td class="r">5.66%</td></tr>
+      <tr><td>Appliances</td><td class="r">1,424,338</td><td class="r">4.59%</td></tr>
+      <tr><td>Beauty</td><td class="r">536,819</td><td class="r">2.66%</td></tr>
+      <tr><td><b>합계</b></td><td class="r"><b>9,327,882</b></td><td></td></tr>
+    </table></div>
+    <div class="card"><h3>후속 행동 = 같은 고객 + 같은 카테고리 + 이후 시점의 리뷰</h3>
+      <p>첫 리뷰 작성 후 <b>7~365일</b> 사이에 같은 user_id가 같은 카테고리에 리뷰를 쓴 비율. 실제 구매 이력이 없어 재구매를 직접 볼 수 없고,
+        다른 카테고리 리뷰는 같은 경험의 연속 행동으로 보기 어렵기 때문이다(범주화 이론). 리뷰를 쓰지 않은 구매는 보이지 않으므로
+        실제 재구매율이 아닌 <b>행동 Proxy</b>다.</p></div>
+  </div>
+
+  <details><summary>데이터 구조 보기 (User Reviews, Item Metadata)</summary>
+    <div class="tablewrap" style="margin-top:12px"><table>
+      <tr><th>컬럼</th><th>타입</th><th>설명</th><th>이 프로젝트 사용</th></tr>
+      <tr><td>user_id</td><td>str</td><td>리뷰어 ID</td><td>후속 행동 Proxy의 핵심 (같은 user 추적)</td></tr>
+      <tr><td>rating</td><td>float</td><td>별점 1~5</td><td>H1 만족도</td></tr>
+      <tr><td>title</td><td>str</td><td>리뷰 제목</td><td>텍스트 분석 시 text와 합쳐 사용</td></tr>
+      <tr><td>text</td><td>str</td><td>리뷰 본문</td><td>H2 길이, H3·H4 텍스트 분석</td></tr>
+      <tr><td>asin</td><td>str</td><td>상품 ID</td><td>보조</td></tr>
+      <tr><td>parent_asin</td><td>str</td><td>상위 상품 ID (색상·사이즈 변형 묶음)</td><td>메타데이터 조인 키</td></tr>
+      <tr><td>timestamp</td><td>int</td><td>리뷰 작성 시각 (Unix ms)</td><td>관찰 창(censoring) 처리의 핵심</td></tr>
+      <tr><td>helpful_vote</td><td>int</td><td>유용성 투표 수</td><td>보조</td></tr>
+      <tr><td>verified_purchase</td><td>bool</td><td>실구매 인증 여부</td><td>필터링 (Proxy 신뢰도)</td></tr>
+      <tr><td>images</td><td>list</td><td>사용자가 올린 이미지</td><td>미사용</td></tr>
+    </table></div>
+    <p class="note">Item Metadata: parent_asin(조인 키), main_category, title, average_rating, rating_number, price(결측 많음), store, categories,
+      features·description, details.</p>
+  </details>
+</div></section>
+
+<section id="h1"><div class="wrap">
+  <h2>H1 · 만족도: 별점 <span class="tag" style="background:var(--green)">지지 (5점 예외)</span></h2>
+  <dl class="qbox">
+    <dt>핵심 질문</dt><dd>고객의 긍정적인 경험은 다음 행동으로 이어지는가?</dd>
+    <dt>가설</dt><dd>만족도가 높은 고객일수록 후속 행동률이 높을 것이다.</dd>
+    <dt>지표</dt><dd>만족도 = 별점 · 후속 행동률 = 후속 리뷰를 쓴 고객 / 해당 조건 고객</dd>
+  </dl>
+  <div class="figs">
+    <figure><img src="assets/h1_detail.png" alt="카테고리별 첫 리뷰 별점별 후속 리뷰 행동률, 카테고리마다 확대한 그래프와 95% 신뢰구간" loading="lazy">
+      <figcaption>카테고리별 확대 그래프(세로축 범위가 카테고리마다 다름, 음영은 95% 신뢰구간). 1→4점은 후속 행동률이 점점 오르지만 5점에서 내려간다.</figcaption></figure>
+    <figure><img src="assets/h1_test.png" alt="Cochran-Armitage 경향성 검정 결과 표: 4개 카테고리 모두 지지" loading="lazy">
+      <figcaption>Cochran-Armitage 경향성 검정: 이항 결과와 순서형 범주(별점)의 선형 추세를 확인. 4개 카테고리 모두 p&lt;0.05로 지지.</figcaption></figure>
+  </div>
+  <div class="concl"><b class="k">결론</b>리뷰 점수가 높을수록 후속 행동률이 높아진다. <b>5점은 예외</b>다. 그렇다면 왜 5점 고객은 4점보다 덜 돌아올까?</div>
+</div></section>
+
+<section id="h2"><div class="wrap">
+  <h2>H2 · 관여도: 리뷰 길이 <span class="tag" style="background:var(--green)">지지</span></h2>
+  <dl class="qbox">
+    <dt>핵심 질문</dt><dd>왜 5점 고객의 후속 행동률이 4점보다 낮을까? 같은 별점을 준 고객 사이에도 차이가 있지 않을까?</dd>
+    <dt>가설</dt><dd>같은 만족도라면, 리뷰에 더 적극적으로 관여한 고객의 후속 행동률이 높을 것이다.</dd>
+    <dt>지표</dt><dd>관여도 Proxy = 리뷰 글자 수 · 통제 = 같은 별점 안에서 비교 · 결과 = 후속 행동률</dd>
+    <dt>왜 글자 수</dt><dd>마음은 언어로 표현되고, 정성이 더 들어간 리뷰에는 제품과 브랜드에 대한 마음이 더 담겨 있다.</dd>
+  </dl>
+  <div class="figs">
+    <figure><img src="assets/h2_length.png" alt="같은 별점 안에서 50자 미만과 400자 이상 리뷰 고객의 1년 안 후속 리뷰 비율" loading="lazy">
+      <figcaption>1년 안에 다시 돌아와 리뷰를 쓴 고객 비율 (50자 미만 vs 400자 이상, 같은 별점끼리 비교).</figcaption></figure>
+    <div class="grid2">
+      <figure><img src="assets/h2_median.png" alt="별점별 첫 리뷰 글자수 중앙값" loading="lazy"><figcaption>별점별 첫 리뷰 글자수 중앙값. 5점 리뷰가 가장 짧다.</figcaption></figure>
+      <figure><img src="assets/h2_grid.png" alt="별점과 리뷰 글자수 구간별 후속 리뷰 행동률" loading="lazy"><figcaption>같은 별점일 때 글자 수가 많을수록 후속 행동률이 올라간다.</figcaption></figure>
+    </div>
+    <figure><img src="assets/h2_test.png" alt="Cochran-Mantel-Haenszel 추세 검정과 Mantel-Haenszel 오즈비 표: 4개 카테고리 모두 지지" loading="lazy">
+      <figcaption>추세 Z: Cochran-Mantel-Haenszel 추세 검정 · 오즈비: Mantel-Haenszel 검정. 별점, 첫 리뷰 연도, 과거 리뷰 활동량을 통제해도 4개 카테고리 모두 p&lt;0.05 (오즈비 1.07~1.18).</figcaption></figure>
+  </div>
+  <div class="concl"><b class="k">결론</b>같은 별점 안에서도 글자 수가 많을수록 후속 행동률이 높아진다. 별점이 높은 고객 중 <b>150자 이상</b>을 감동 신호를 잡는 힌트로 쓴다.
+    다만 길이만으로는 5점이 덜 돌아오는 이유가 설명되지 않는다. 리뷰에 <b>무엇을</b> 썼을까?</div>
+</div></section>
+
+<section id="h3"><div class="wrap">
+  <h2>H3 · 경험: 리뷰 내용 <span class="tag" style="background:var(--amber)">일부 지지</span></h2>
+  <dl class="qbox">
+    <dt>핵심 질문</dt><dd>같은 별점을 주었는데, 돌아온 고객과 안 돌아온 고객은 리뷰에서 무엇을 다르게 말했을까?</dd>
+    <dt>가설</dt><dd>후속 행동을 보인 고객과 그렇지 않은 고객은 리뷰에서 표현한 경험의 내용이 다를 것이다.</dd>
+    <dt>표본</dt><dd>1~2점, 3점, 4점, 5점 그룹마다 돌아온 고객과 안 돌아온 고객을 카테고리마다 500명씩 (그룹마다 4,000명)</dd>
+    <dt>판정</dt><dd>AI 판정: 판정 규칙 문서(코드북)를 따라 리뷰마다 경험을 표시, 두 AI가 서로 모르게 판정. 사람 검증: 두 AI가 엇갈린 리뷰와 무작위 표본
+      516건을 직접 판정해 규칙을 두 번 고침</dd>
+    <dt>지표</dt><dd>조건(카테고리·별점·글자수·선물·다른 경험)을 맞춘 후속 행동률과 오즈비. p&lt;0.15 신호 있음, p&lt;0.20 약한 신호</dd>
+  </dl>
+
+  <h4>리뷰 속 경험을 '언제, 누구의 일인가'로 세 가지로 나눴다</h4>
+  <div class="tablewrap"><table>
+    <tr><th>경험</th><th>범위</th><th>칭찬 / 해결됨</th><th>불만 / 안 됨</th></tr>
+    <tr><td><b>배송</b></td><td>주문부터 문 앞 도착까지 · 택배, 포장</td><td>"이틀 일찍, 꼼꼼하게 포장돼 왔어요"</td><td>"도착 예정일보다 일주일이나 늦게 왔어요"</td></tr>
+    <tr><td><b>제품</b></td><td>받은 뒤 쓰고 먹어 본 경험 · 제품 자체</td><td>"맛있어서 아이들이 매일 찾아요"</td><td>"한 달 만에 끈이 끊어졌어요"</td></tr>
+    <tr><td><b>문제 해결</b></td><td>문제가 생긴 뒤 · 판매자와 아마존의 대응</td><td>"사진을 보내자 바로 환불해 줬어요"</td><td>"교체를 두 번 요청했는데 답이 없어요"</td></tr>
+  </table></div>
+  <p class="note">헷갈리는 경우는 규칙으로 고정: 박스가 찌그러져 깨진 채 도착 → 배송 불만, 박스는 멀쩡한데 처음부터 불량 → 제품 불만,
+    "반품했어요"만 있음 → 원인을 보고 판단, "Cheap"·"Ok"처럼 뜻이 모호 → 표시 안 함. 예시 문장은 규칙 설명용으로 만든 문장이다.</p>
+
+  <div class="figs">
+    <figure><img src="assets/h3_star12.png" alt="별점 1~2점: 문제 해결됨을 쓴 고객 +2.3%p (오즈비 1.47), 배송 불만을 쓴 고객 -1.1%p (오즈비 0.79)" loading="lazy">
+      <figcaption>별점 1~2점: 회복 경험은 후속 행동을 보이게 했다.</figcaption></figure>
+    <div class="grid2">
+      <figure><img src="assets/h3_star3.png" alt="별점 3점: 제품 칭찬 +0.6%p (오즈비 1.09), 배송 불만 -1.1%p (오즈비 0.83), 약한 신호" loading="lazy">
+        <figcaption>별점 3점: 제품 칭찬은 더, 배송 불만은 덜 (약한 신호)</figcaption></figure>
+      <figure><img src="assets/h3_star4.png" alt="별점 4점: 배송 칭찬 -2.0%p (오즈비 0.72), 제품 칭찬 +1.0%p (오즈비 1.17)" loading="lazy">
+        <figcaption>별점 4점: 제품 칭찬은 더, 배송 칭찬은 덜</figcaption></figure>
+    </div>
+    <details><summary>별점 5점 결과 보기</summary>
+      <figure style="margin-top:12px"><img src="assets/h3_star5.png" alt="별점 5점: 리뷰에 무엇을 썼는지는 다음 행동과 관련이 없었다" loading="lazy">
+        <figcaption>별점 5점: 리뷰에 무엇을 썼는지는 다음 행동과 관련이 없었다.</figcaption></figure></details>
+  </div>
+  <div class="concl"><b class="k">결론</b>
+    1~2점: 회복 경험을 쓴 고객은 후속 행동률이 더 높았고(오즈비 1.47), 배송 불만을 쓴 고객은 더 낮았다(0.79).<br>
+    3점: 제품 칭찬을 쓴 고객은 더 높았고, 배송 불만을 쓴 고객은 더 낮았다(약한 신호).<br>
+    4점: 제품 칭찬을 쓴 고객은 더 높았다(1.17). 5점: 후속 행동률과 관련이 적다.<br>
+    <b>→ 회복 경험, 배송 불만, 제품 칭찬을 KPI 지표로 추적하자.</b></div>
+</div></section>
+
+<section id="h4"><div class="wrap">
+  <h2>H4 · 마음: 감정의 세기 <span class="tag" style="background:var(--amber)">가설과 반대 방향</span></h2>
+  <dl class="qbox">
+    <dt>핵심 질문</dt><dd>같은 별점을 주었을 때, 후속 행동을 보인 고객은 리뷰에서 감정을 얼마나 드러낼까?</dd>
+    <dt>가설</dt><dd>불만 고객(1~2점): 다시 돌아온 고객은 부정 감정을 더 잔잔하게 표현했을 것이다.<br>
+      만족 고객(4~5점): 다시 돌아온 고객은 긍정 감정을 더 강하게 표현했을 것이다.</dd>
+    <dt>측정</dt><dd>공식 감정 사전(NRC, VADER) + 강조 규칙(느낌표 연속 3개 이상, 대문자 등)으로 감정 점수를 매겨, 긍정·부정 각각 4단계(없음/약함/중간/강함)로 나눔.
+      첫 리뷰 930만 명 전체에 적용</dd>
+    <dt>판정</dt><dd>p&lt;0.05</dd>
+  </dl>
+
+  <h4>리뷰에 감정을 얼마나 세게 드러냈는지를 4단계로 나눴다 (긍정, 부정 따로)</h4>
+  <div class="tablewrap"><table>
+    <tr><th>세기</th><th>정의</th><th>긍정 예</th><th>부정 예</th></tr>
+    <tr><td><b>없음</b></td><td>감정 없이 사실만</td><td>"잘 작동해요"</td><td>"3주 만에 고장 났어요"</td></tr>
+    <tr><td><b>약함</b></td><td>미지근하거나 조심스러운 감정</td><td>"꽤 괜찮아요"</td><td>"조금 실망스러워요"</td></tr>
+    <tr><td><b>중간</b></td><td>보통 세기의 분명한 감정</td><td>"너무 좋아요!"</td><td>"많이 실망했어요"</td></tr>
+    <tr><td><b>강함</b></td><td>극단적인 말, 강조, 삶에 미친 영향</td><td>"완전 사랑해요!!!"</td><td>"완전 쓰레기예요!!!"</td></tr>
+  </table></div>
+  <p class="note">세기를 정하는 기준: 제품이 좋은지가 아니라 글쓴이의 감정 세기, 가장 센 표현 하나로(길이나 칭찬 개수는 세지 않음), 강조는 감정에 붙을 때만,
+    행동 권유('추천해요', '돈 아까워요')는 세지 않음. 감정 강도 연구(SemEval-2018)의 4단계에 판정 기준을 더했다.</p>
+
+  <div class="figs">
+    <figure><img src="assets/h4_shares.png" alt="별점별 리뷰 감정 세기 4단계 비율, 긍정과 부정" loading="lazy">
+      <figcaption>별점별 리뷰 감정 세기 비율. 5점 리뷰의 75%가 긍정 중간 이상이다.</figcaption></figure>
+    <div class="grid2">
+      <figure><img src="assets/h4_negative.png" alt="불만 고객 1점과 2점: 부정 표현 세기별 후속 리뷰 행동" loading="lazy"><figcaption>불만 고객(1~2점): 부정 표현을 강하게 쓴 고객이 가장 높다.</figcaption></figure>
+      <figure><img src="assets/h4_positive.png" alt="만족 고객 4점과 5점: 긍정 표현 세기별 후속 리뷰 행동" loading="lazy"><figcaption>만족 고객(4~5점): 5점은 세기와 관계없이 거의 같다.</figcaption></figure>
+    </div>
+  </div>
+  <div class="concl"><b class="k">결론</b>
+    같은 별점 안에서 강한 감정 표현은 부정이든 긍정이든 후속 행동률이 높다. 같은 별점 안에서 평범한 표현은 후속 행동률이 가장 낮다.
+    5점은 표현의 크기가 후속 행동률에 관여하지 않는다.</div>
+</div></section>
+
+<section id="summary"><div class="wrap">
+  <h2>PART 01 종합</h2>
+  <p class="sub">리뷰 신호로 고객을 나누면 다시 돌아올 고객과 아닌 고객이 갈린다. 그러나 리뷰 글로는 마음의 크기를 다 재지 못한다</p>
+  <div class="grid2">
+    <figure><img src="assets/summary_signal.png" alt="1~4점 고객을 별점, 글자수, 감정 세기로 나눈 상위 10%와 하위 10%의 1년 안 후속행동률" loading="lazy">
+      <figcaption>1~4점 고객 리뷰 신호 분석(전체 데이터). 상위 10%가 하위 10%보다 1.7배 더 돌아온다.</figcaption></figure>
+    <figure><img src="assets/summary_experience.png" alt="경험까지 더하면 하위 10% 후속행동률이 8.8%에서 6.4%로 내려간다" loading="lazy">
+      <figcaption>표본 12,000명(1~4점)에 리뷰 속 경험까지 더하면 '돌아오지 않을 고객'을 더 잘 골라낸다.</figcaption></figure>
+  </div>
+  <div class="concl"><b class="k">PART 02로</b>리뷰는 주문의 일부에만 남고, 글로 드러난 감정은 겪은 일과 섞여 있다. 그래서 PART 02에서는
+    <b>마음을 리뷰에서 추측하지 않고 구매 직후 설문으로 직접 묻고</b>, PART 01이 찾은 경험(회복, 배송 불만, 제품 칭찬)을 운영 기록으로 매일 잰다.</div>
+</div></section>
+
+<div class="wrap part" id="part02"><div class="label">PART 02</div><h2>고객 감동 모니터링 대시보드</h2>
+  <p class="sub">주문마다 PART 01의 오즈비로 긍정·부정 울림을 정하고, 다섯 화면으로 비율에서 고객 한 명까지 내려간다</p>
+</div>
+
+<section id="survey"><div class="wrap">
+  <h2>구매 후 설문: 마음을 직접 묻는다</h2>
+  <p class="sub">도착 3일 뒤 모든 주문에 보내는 객관식·비공개 설문</p>
+  <figure><img src="assets/survey_mockup.png" alt="구매 후 설문 시안: 표정 일곱 개로 마음을 묻고, 실망 쪽이면 이유와 회복 방법을, 아주 좋았다면 좋았던 점을 묻는다" loading="lazy"></figure>
+  <div class="grid3" style="margin-top:16px">
+    <div class="card"><h3>① 표정 7단계</h3><p>별점 대신 "받아 보니 마음이 어땠나요?"를 아주 실망부터 아주 좋았다까지 일곱 표정으로 묻는다. 방향과 세기(H4의 4단계)를 한 번에 답한다.
+      PART 01에서 5점에는 그냥 괜찮은 고객과 감동한 고객이 섞여 있었기 때문이다.</p></div>
+    <div class="card"><h3>② 실망 쪽이라면</h3><p>무엇이 아쉬웠는지와, 문의센터에 남길지·직접 연락을 받을지·괜찮은지를 묻는다. '괜찮아요'라고 답한 고객이 가장 조용한 이탈 위험이다.</p></div>
+    <div class="card"><h3>③ 아주 좋았다면</h3><p>특히 좋았던 점을 묻는다. 리뷰 버튼은 모든 응답자에게 똑같이 보여, 만족한 고객만 리뷰로 보내지 않는다.</p></div>
+  </div>
+</div></section>
+
+<section id="dashboard"><div class="wrap">
+  <h2>Tableau 대시보드</h2>
+  <div class="warn">대시보드 데이터는 <a href="https://www.kaggle.com/datasets/kyanyoga/sample-sales-data">Kaggle Sample Sales Data</a>를 바탕으로
+    재구성한 <b>합성 B2C 데이터</b>다 (2024-01-01부터 매일 생성, 2026-10-14 기준 고객 10,180명, 주문 15,583건). 화면에 보이는 효과는 PART 01 결과를 따라
+    넣은 가정이며 새 발견이 아니다. 숫자보다 지표 설계와 화면 구조를 보여 준다.</div>
+
+  <div class="grid3">
+    <div class="card"><h3>감동 하트</h3>
+      <p>무게 = ln(PART 01 오즈비), 만족 구간마다 다르다.<br>1~2점 문제 24시간 내 해결 +0.39 · 배송 불만 -0.24<br>3점 제품 칭찬 +0.09 · 배송 불만 -0.19<br>
+        4점 제품 칭찬 +0.16 · 5점 무게 없음<br>합이 0보다 크면 긍정 울림, 작으면 부정 울림</p></div>
+    <div class="card"><h3>다섯 화면</h3>
+      <p>01 Overview(감동은 얼마나 차 있나) → 02 Deep Dive(무엇이 가르나) → 03 Risk &amp; Recovery(누구를 먼저 챙기나) → 04 고객 상세 → 05 Measurement Health(숫자를 믿어도 되나). 화면 사이는 클릭으로 이동한다.</p></div>
+    <div class="card"><h3>매일 쌓이는 데이터</h3>
+      <p>매일 07:00 어제까지의 주문을 자동으로 만들고 지표를 다시 계산한다. 기간(전체·최근 1년·6개월·90일)과 재구매 기간(30일·90일·180일·1년)을 고를 수 있다.</p></div>
+  </div>
+
+  <div id="vizBox" class="viz" hidden><iframe id="viz" title="고객 감동 모니터링 Tableau 대시보드" loading="lazy" allowfullscreen></iframe></div>
+  <p class="note" id="vizNote">아래는 실제 Tableau 대시보드 화면이다.</p>
+
+  <div class="figs">
+    <figure><img src="assets/tableau/dash_01.png" alt="01 Overview: 재구매율 28.8%, 문제 해결률 67.7%, 배송 문제 발생률 18.8%, 조치 필요 고객 318명, 긍정 울림 20.3%와 부정 울림 13.7% 하트" loading="lazy">
+      <figcaption>01 Overview · 감동은 얼마나 차 있나. 하트 안의 색은 설문 답, 하트를 누르면 02로 이동</figcaption></figure>
+    <figure><img src="assets/tableau/dash_02.png" alt="02 Deep Dive: 첫 배송 상태별 재구매율, 지역별 울림, 마음 세기별 다음 구매율, 회차별 다음 구매율, 상품군별 문제 유형, 별점별 리뷰 길이" loading="lazy">
+      <figcaption>02 Deep Dive · 어떤 경험이 감동과 재구매를 가르나</figcaption></figure>
+    <figure><img src="assets/tableau/dash_03.png" alt="03 Risk and Recovery: 조치 필요 고객 목록과 문제 결과별, 해결 시간별 180일 유지율" loading="lazy">
+      <figcaption>03 Risk &amp; Recovery · 누구를 먼저 챙길까. 실망이 큰 고객부터, 같은 마음이면 직접 연락을 요청한 고객 → 문제 미해결 → 누적 매출순. 고객 번호를 누르면 04로 이동</figcaption></figure>
+    <figure><img src="assets/tableau/dash_04.png" alt="04 고객 상세: 고객 4352의 긍정 울림 점수 0.39, 부정 울림 점수 0.25와 주문 순서별 경험" loading="lazy">
+      <figcaption>04 고객 상세 · 이 고객에게 무슨 일이 있었나. 최근 주문일수록 크게 반영한 울림 점수(180일마다 절반)</figcaption></figure>
+    <figure><img src="assets/tableau/dash_05.png" alt="05 Measurement Health: 리뷰 10.9%, 설문 42.8%, 운영 기록 100%와 유입 분기별 180일 재구매율" loading="lazy">
+      <figcaption>05 Measurement Health · 이 숫자를 믿어도 되나</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="limits"><div class="wrap">
+  <h2>한계</h2>
+  <div class="grid2">
+    <div class="card"><h3>PART 01</h3><ul>
+      <li>재구매를 직접 보지 못한다 (후속 리뷰를 대리 지표로 씀)</li>
+      <li>리뷰를 쓴 고객만 보인다</li>
+      <li>AI 판정이 완벽하지 않을 수 있다</li>
+      <li>경험 분석에서 해당 경험을 가진 고객의 수가 적다</li></ul></div>
+    <div class="card"><h3>PART 02</h3><ul>
+      <li>데이터가 합성이라 숫자는 가정을 되풀이할 뿐이다</li>
+      <li>나쁜 경험(지연, 오배송)은 운영 기록으로 늘 보이지만, 좋은 경험은 고객이 설문·리뷰로 말해 줘야 보인다. 긍정 울림의 약 70%가 설문에서 나오므로, 설문 응답률이 떨어지면 마음이 그대로여도 긍정 울림이 줄어든다</li>
+      <li>경험의 무게가 서로 독립적으로 더해진다는 가정, 고객 점수의 반감기 180일은 설계 선택이다</li>
+      <li>다음 단계: 실제 설문 데이터로 하트 무게를 다시 잰다</li></ul></div>
+  </div>
+</div></section>
+
+<section id="ai"><div class="wrap">
+  <h2>AI 사용 공개</h2>
+  <div class="grid2">
+    <div class="card"><h3>어디에 썼나</h3><p>리뷰 속 <b>경험 판정</b>(H3)과 <b>감정 세기 판정</b>(H4). Claude(Sonnet, Opus) 두 모델이
+      판정 규칙 문서(코드북)를 따라 서로 모르게 리뷰마다 경험과 감정 세기를 표시했다.</p></div>
+    <div class="card"><h3>사람이 검증한 것</h3><ul>
+      <li>두 AI가 엇갈린 리뷰와 무작위 표본 <b>516건을 직접 판정</b>해 AI 판정과 비교</li>
+      <li>그 결과로 <b>경험 사전(코드북) 수정</b>: 헷갈리는 경우를 규칙으로 고정하고 기준을 두 번 고침</li>
+      <li><b>감정 사전 수정</b>: 감정 세기 4단계 기준을 다듬고, 같은 단계를 감정 사전(NRC, VADER)과 강조 규칙으로 재현해 930만 명 전체에 적용</li></ul></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  데이터: Amazon Reviews 2023 (Hou et al., 2024, UCSD McAuley Lab) · Kaggle Sample Sales Data (재구성) ·
+  감정 세기: SemEval-2018 Task 1, NRC Lexicons, VADER<br>
+  <span id="repoLine"></span>
+</div></footer>
+
+<script>
+// Fill these after publishing (empty = hidden)
+const TABLEAU_URL = "";   // e.g. https://public.tableau.com/views/<workbook>/01Overview
+const SLIDES_URL = "";    // Google Slides link (view access)
+const REPO_URL = "";      // GitHub repository
+
+if (TABLEAU_URL) {
+  const sep = TABLEAU_URL.includes("?") ? "&" : "?";
+  document.getElementById("viz").src = TABLEAU_URL + sep + ":showVizHome=no&:embed=true";
+  document.getElementById("vizBox").hidden = false;
+  document.getElementById("vizNote").innerHTML =
+    '위 대시보드는 Tableau Public에서 바로 눌러 볼 수 있다. 화면이 작으면 <a href="' + TABLEAU_URL + '" target="_blank" rel="noopener">새 창에서 보기</a>. 아래는 각 화면 캡처다.';
+  const b = document.getElementById("dashBtn");
+  b.href = TABLEAU_URL; b.target = "_blank"; b.rel = "noopener";
+}
+if (SLIDES_URL) {
+  const s = document.getElementById("slidesBtn");
+  s.href = SLIDES_URL; s.target = "_blank"; s.rel = "noopener"; s.hidden = false;
+}
+if (REPO_URL) {
+  document.getElementById("repoLine").innerHTML = '코드와 실행 방법: <a href="' + REPO_URL + '">' + REPO_URL + '</a>';
+}
+</script>
+</body>
+</html>
