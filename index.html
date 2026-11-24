@@ -83,6 +83,21 @@ summary{cursor:pointer;color:var(--blue);font-weight:600;font-size:15px}
 .hypnav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
 .hypnav a{font-size:14px;text-decoration:none;padding:4px 12px;border-radius:999px;background:var(--card);color:var(--ink)}
 .log li{margin:8px 0}
+.mtree{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px}
+.mrow{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:center}
+.mlv{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.03em;line-height:1.35}
+.mbx{display:flex;flex-wrap:wrap;gap:10px}
+.mn{flex:1 1 150px;border:1.5px solid var(--ink);border-radius:10px;padding:9px 12px;font-size:14.5px;line-height:1.45;background:var(--paper)}
+.mn b{display:block;font-size:15.5px}
+.mn span{color:var(--muted);font-size:13px}
+.mn i{font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--blue);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px}
+.mn.out{border-color:var(--pink);background:var(--pink-pale)}
+.mn.off{border:1.5px dashed var(--grey);color:var(--muted)}
+.mn.off b{color:var(--muted)}
+.marr{grid-column:2;text-align:center;color:var(--grey);font-size:15px;line-height:1;padding:6px 0}
+.mkey{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:13px;color:var(--muted)}
+.mkey s{display:inline-block;width:22px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px;text-decoration:none}
+@media (max-width:760px){.mrow{grid-template-columns:1fr;gap:6px}.marr{grid-column:1}}
 footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
 @media (max-width:760px){
   body{font-size:16px}
@@ -96,8 +111,8 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
 <body>
 <nav><div class="wrap">
   <b>고객 감동 측정</b>
-  <a href="#problem">문제</a><a href="#frame">지표·여정</a><a href="#data">데이터</a><a href="#h1">H1</a><a href="#h2">H2</a>
-  <a href="#h3">H3</a><a href="#h4">H4</a><a href="#summary">종합</a><a href="#part02">대시보드</a><a href="#limits">한계</a><a href="#ai">AI 사용</a>
+  <a href="#problem">문제</a><a href="#frame">지표</a><a href="#data">데이터</a><a href="#h1">H1</a><a href="#h2">H2</a>
+  <a href="#h3">H3</a><a href="#h4">H4</a><a href="#summary">종합</a><a href="#crm">CRM</a><a href="#part02">대시보드</a><a href="#limits">한계</a><a href="#ai">AI 사용</a>
 </div></nav>
 
 <header><div class="wrap">
@@ -121,25 +136,50 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <b>별점과 리뷰 작성 유무만으로는 고객의 마음이 움직였는지, 떠나려는 신호가 있는지 알 수 없다.</b></div>
   <div class="card" style="margin-top:18px"><h3>성공 기준</h3>
     <p><b>리뷰 분석으로 떠나갈 고객과 돌아올 고객을 가르는 신호가 나오면 성공.</b> 같은 별점 안에서 리뷰의 길이, 경험, 감정 세기를
-      가설 4개로 판정하고, 미리 정한 기준(<b>H1·H2·H4 p&lt;0.05</b>, 표본이 작은 H3는 p&lt;0.15 신호 있음 · p&lt;0.20 약한 신호)을 넘은 것만 신호로 인정한다.</p>
-    <p><b>결과:</b> 리뷰 신호로 고객을 나누면 하위 10%는 6.4%, 상위 10%는 11.6%만 다시 돌아온다 (전체 9.5%).
-      찾은 신호는 PART 02 대시보드에서 매일 쓴다.</p></div>
+      가설 4개로 판정하고, 미리 정한 기준(<b>H1·H2·H4 p&lt;0.05</b>, 표본이 작은 H3는 p&lt;0.15 신호 있음 · p&lt;0.20 약한 신호,
+      930만 명 상품군별 비교는 <b>0.3%p 이상이면서 데이터를 반으로 나눠도 같은 방향</b>)을 넘은 것만 신호로 인정한다.</p>
+    <p><b>결과:</b> 1~4점 고객을 리뷰 신호로 나누면 상위·하위 10% 차이가 별점만 쓸 때 <b>1.44배 → 1.66배</b>로 커지고,
+      표본에서 리뷰 속 경험까지 더하면 하위 10%의 후속 행동률이 <b>5.5% → 4.6%</b>로 내려가 돌아오지 않을 고객을 <b>17% 더 정확히</b> 골라낸다.
+      찾은 신호는 고객 유형별 CRM 액션과 PART 02 대시보드로 이어진다.</p></div>
 </div></section>
 
 <section id="frame"><div class="wrap">
-  <h2>메트릭 하이라키와 고객 여정</h2>
-  <p class="sub">감동은 매출로 가는 길의 한가운데 있고, 배송·사용·문제 해결 단계에서 생긴다</p>
-  <div class="grid2">
-    <figure><img src="assets/metric_hierarchy.png" alt="메트릭 하이라키: 매출과 고객가치 아래 고객 수와 LTV, LTV 아래 재구매·유지, 그 아래 감동(도달률, 강도), 그 아래 배송·회복·제품 경험과 각 측정 지표"
-      loading="lazy"><figcaption>메트릭 하이라키. 감동 도달률은 대시보드의 긍정 울림 비율, 감동 강도는 설문 마음 세기로 잰다.</figcaption></figure>
-    <figure><img src="assets/customer_journey.png" alt="고객 여정: 유입, 탐색, 구매, 배송, 사용, 문제와 회복을 거쳐 배송·제품·회복 감동이 생기고 재구매와 추천, 고객가치 증가로 이어진다"
-      loading="lazy"><figcaption>고객 여정. 배송, 사용, 문제와 회복에서 생긴 감동이 재구매와 추천으로 이어진다.</figcaption></figure>
+  <h2>지표 체계</h2>
+  <p class="sub">무엇을 쟀고, 무엇은 재지 못했는지를 한 장에 정리했다</p>
+  <div class="mtree" role="img" aria-label="지표 체계: 목표인 매출·고객가치 아래 LTV와 재구매가 있고, 재구매 대신 후속 리뷰 행동을 결과 지표로 썼다. 선행 신호로 별점, 리뷰 길이, 리뷰 속 경험, 감정 세기를 쟀다. 고객 수, 운영 지표는 이번 데이터로 재지 못했다.">
+    <div class="mrow"><div class="mlv">목표</div><div class="mbx">
+      <div class="mn"><b>매출 · 고객가치</b></div></div></div>
+    <div class="marr">↓</div>
+    <div class="mrow"><div class="mlv">상위 지표</div><div class="mbx">
+      <div class="mn"><b>LTV · 재구매</b><span>리뷰 데이터에는 구매 기록이 없음</span></div>
+      <div class="mn off"><b>고객 수 (유입 · 추천)</b><span>이번 분석 범위 밖</span></div></div></div>
+    <div class="marr">↓ 재구매 대신</div>
+    <div class="mrow"><div class="mlv">결과 지표<br>(Proxy)</div><div class="mbx">
+      <div class="mn out"><b>후속 리뷰 행동률</b><span>같은 고객이 같은 카테고리에 이후 다시 리뷰를 남긴 비율</span></div></div></div>
+    <div class="marr">↑ 무엇이 이걸 미리 알려 주나</div>
+    <div class="mrow"><div class="mlv">선행 신호<br>(리뷰에서 측정)</div><div class="mbx">
+      <div class="mn"><b>별점<i>H1</i></b><span>만족도</span></div>
+      <div class="mn"><b>리뷰 길이<i>H2</i></b><span>관여도</span></div>
+      <div class="mn"><b>리뷰 속 경험<i>H3</i></b><span>배송 · 제품 · 문제 해결, AI 판정</span></div>
+      <div class="mn"><b>감정 세기<i>H4</i></b><span>격한 불만 ~ 격한 칭찬, AI 판정</span></div></div></div>
+    <div class="marr">↑ 원인 쪽</div>
+    <div class="mrow"><div class="mlv">운영 지표<br>(향후 연결)</div><div class="mbx">
+      <div class="mn off"><b>배송 정시율 · 문의 해결 시간 · 반품률</b><span>리뷰 데이터에 없음. 사내 데이터와 붙이면 경험 신호의 원인을 바로 볼 수 있다</span></div></div></div>
+    <div class="mkey"><span><s style="border:1.5px solid var(--ink)"></s>측정함</span>
+      <span><s style="border:1.5px solid var(--pink);background:var(--pink-pale)"></s>결과 지표 (재구매 대신)</span>
+      <span><s style="border:1.5px dashed var(--grey)"></s>이번 데이터로 측정 못 함</span></div>
   </div>
+  <p class="note">PART 01은 선행 신호 네 가지가 후속 리뷰 행동을 얼마나 미리 알려 주는지 검증하고, PART 02 대시보드는 이 신호를 상품군별로 모니터링한다.</p>
 </div></section>
 
 <div class="wrap part"><div class="label">PART 01</div><h2>아마존 리뷰 데이터 분석</h2>
   <p class="sub">같은 별점끼리 비교하며 별점 → 리뷰 길이 → 경험 → 감정 순서로 좁혀 갔다</p>
-  <div class="hypnav"><a href="#data">데이터</a><a href="#h1">H1 별점</a><a href="#h2">H2 길이</a><a href="#h3">H3 경험</a><a href="#h4">H4 감정</a><a href="#summary">종합</a></div>
+  <div class="hypnav"><a href="#data">데이터</a><a href="#h1">H1 별점</a><a href="#h2">H2 길이</a><a href="#h3">H3 경험</a><a href="#h4">H4 감정</a><a href="#summary">종합</a><a href="#crm">CRM</a></div>
+  <div class="card" style="margin-top:16px"><h3>분석 원칙: 상품군을 먼저 나란히 보고, 차이가 없을 때만 합친다</h3>
+    <p><b>H1·H2·H4</b>는 첫 리뷰 고객 930만 명 전체를 상품군별로 먼저 비교하고, 네 상품군의 방향이 같을 때만 합쳐서 요약한다.
+      방향이 갈리면(H4의 열광 고객처럼) 상품군별 결과를 그대로 보여 준다.</p>
+    <p><b>H3(경험)</b>는 AI 판정 비용 때문에 표본을 쓴다(4,000건 판정에 1~3시간). 별점 그룹마다 상품군별로 돌아온 고객 500명, 안 돌아온 고객 500명을 뽑고,
+      <b>가중치로 실제 고객 비율을 복원한 뒤 네 상품군을 같은 비중으로 평균한 '합친 결과'</b>로 결론을 낸다. 상품군별 표본이 작아 상품군별 차이는 방향만 참고한다.</p></div>
 </div>
 
 <section id="data"><div class="wrap">
@@ -231,7 +271,8 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
   <dl class="qbox">
     <dt>핵심 질문</dt><dd>같은 별점을 주었는데, 돌아온 고객과 안 돌아온 고객은 리뷰에서 무엇을 다르게 말했을까?</dd>
     <dt>가설</dt><dd>후속 행동을 보인 고객과 그렇지 않은 고객은 리뷰에서 표현한 경험의 내용이 다를 것이다.</dd>
-    <dt>표본</dt><dd>1~2점, 3점, 4점, 5점 그룹마다 돌아온 고객과 안 돌아온 고객을 카테고리마다 500명씩 (그룹마다 4,000명)</dd>
+    <dt>표본</dt><dd>1~2점, 3점, 4점, 5점 그룹마다 돌아온 고객과 안 돌아온 고객을 카테고리마다 500명씩 (그룹마다 4,000명).
+      결과는 카테고리마다 실제 고객 비율로 되돌린 뒤 네 카테고리를 같은 비중으로 평균한 값</dd>
     <dt>판정</dt><dd>AI 판정: 판정 규칙 문서(코드북)를 따라 리뷰마다 경험을 표시, 두 AI가 서로 모르게 판정. 사람 검증: 두 AI가 엇갈린 리뷰와 무작위 표본
       516건을 직접 판정해 규칙을 두 번 고침</dd>
     <dt>지표</dt><dd>조건(카테고리·별점·글자수·선물·다른 경험)을 맞춘 후속 행동률과 오즈비. p&lt;0.15 신호 있음, p&lt;0.20 약한 신호</dd>
@@ -265,6 +306,17 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     3점: 제품 칭찬을 쓴 고객은 더 높았고, 배송 불만을 쓴 고객은 더 낮았다(약한 신호).<br>
     4점: 제품 칭찬을 쓴 고객은 더 높았다(1.17). 5점: 후속 행동률과 관련이 적다.<br>
     <b>→ 회복 경험, 배송 불만, 제품 칭찬을 KPI 지표로 추적하자.</b></div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card"><h3>측정 방법을 두 번 바꿨다</h3><ul>
+      <li>1차 키워드 사전: 실제 언급 중 사전이 잡은 비율 35~55% (문제 해결은 13~43%) → 교체</li>
+      <li>2차 AI 라벨로 학습한 분류 모델: 미리 정한 정확도 기준 통과 3/7 → 교체</li>
+      <li>최종 코드북 + AI 2종 + 직접 판정 516건: AI 간 일치도(카파) 대부분 0.81~0.97 → 채택</li>
+      <li>처음 기준에서 1~2점 '제품 불만' 오즈비 1.84였던 결과가, 사람 판정에 맞춘 기준에서는 1.15로 사라졌다. 결론은 최종 기준으로만 썼다.</li></ul></div>
+    <div class="card"><h3>상품군별로 보면</h3><ul>
+      <li>1~2점 배송 불만은 네 상품군 모두 같은 방향 (오즈비 0.69~0.89)</li>
+      <li>1~2점 문제 해결 고객 69명 중 37명이 가전이라, 상품군별로는 방향만 참고한다</li>
+      <li>그래서 경험은 상품군별 결론 대신 합친 결과의 방향을 결론으로 쓴다</li></ul></div>
+  </div>
 </div></section>
 
 <section id="h4"><div class="wrap">
@@ -274,8 +326,8 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <dt>가설</dt><dd>불만 고객(1~2점): 다시 돌아온 고객은 부정 감정을 더 잔잔하게 표현했을 것이다.<br>
       만족 고객(4~5점): 다시 돌아온 고객은 긍정 감정을 더 강하게 표현했을 것이다.</dd>
     <dt>측정</dt><dd>공식 감정 사전(NRC, VADER) + 강조 규칙(느낌표 연속 3개 이상, 대문자 등)으로 감정 점수를 매겨, 긍정·부정 각각 4단계(없음/약함/중간/강함)로 나눔.
-      첫 리뷰 930만 명 전체에 적용</dd>
-    <dt>판정</dt><dd>p&lt;0.05</dd>
+      첫 리뷰 930만 명 전체에 적용. 단계를 나누는 점수 기준점은 AI가 판정한 16,000건과 가장 많이 일치하는 값으로 정함 (긍정 0.25점부터 약함, 0.3점부터 중간)</dd>
+    <dt>판정</dt><dd>합친 결과 p&lt;0.05 · 상품군별 결과는 0.3%p 이상이면서 데이터를 반으로 나눠도 같은 방향일 때만 채택</dd>
   </dl>
 
   <h4>리뷰에 감정을 얼마나 세게 드러냈는지를 4단계로 나눴다 (긍정, 부정 따로)</h4>
@@ -293,26 +345,55 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <figure><img src="assets/h4_shares.png" alt="별점별 리뷰 감정 세기 4단계 비율, 긍정과 부정" loading="lazy">
       <figcaption>별점별 리뷰 감정 세기 비율. 5점 리뷰의 75%가 긍정 중간 이상이다.</figcaption></figure>
     <div class="grid2">
-      <figure><img src="assets/h4_negative.png" alt="불만 고객 1점과 2점: 부정 표현 세기별 후속 리뷰 행동" loading="lazy"><figcaption>불만 고객(1~2점): 부정 표현을 강하게 쓴 고객이 가장 높다.</figcaption></figure>
-      <figure><img src="assets/h4_positive.png" alt="만족 고객 4점과 5점: 긍정 표현 세기별 후속 리뷰 행동" loading="lazy"><figcaption>만족 고객(4~5점): 5점은 세기와 관계없이 거의 같다.</figcaption></figure>
+      <figure><img src="assets/h4_strong_vs_medium.png" alt="격하게 쓴 고객과 보통으로 쓴 고객의 후속 리뷰 행동률 차이, 1~4점, 상품군별" loading="lazy">
+        <figcaption>보통(중간)과 비교: 격하게 쓴 고객이 1~4점, 네 상품군 모두에서 더 돌아온다.</figcaption></figure>
+      <figure><img src="assets/h4_cat_vs_none.png" alt="감정을 격하게 쓴 고객과 감정 표현이 없는 고객의 후속 리뷰 행동률 차이, 1~5점, 상품군별" loading="lazy">
+        <figcaption>감정 표현이 없는 고객과 비교: 칭찬은 상품군마다 반대. 패션·뷰티는 더, 식품·가전은 덜 돌아온다.</figcaption></figure>
     </div>
   </div>
+  <h4>같은 열광도 상품군마다 다르다 (감정 표현이 없는 고객 대비 차이)</h4>
+  <div class="tablewrap"><table>
+    <tr><th>상품군</th><th>1점 격한 불만</th><th>4점 격한 칭찬</th><th>5점 격한 칭찬</th><th>해석 (검증하지 않은 가설)</th></tr>
+    <tr><td><b>식품</b></td><td>+0.7%p</td><td>-0.6%p</td><td>기준 미달</td><td>맛 불만은 다른 제품을 사러 오고, 만족하면 같은 제품에 정착</td></tr>
+    <tr><td><b>패션</b></td><td>기준 미달</td><td>+1.4%p</td><td>+1.1%p</td><td>좋아한 브랜드의 다른 제품을 또 구매</td></tr>
+    <tr><td><b>뷰티</b></td><td>기준 미달</td><td>+0.5%p</td><td>+0.6%p</td><td>좋아한 브랜드의 다른 제품을 또 구매</td></tr>
+    <tr><td><b>가전</b></td><td>기준 미달</td><td>-0.6%p</td><td>-0.7%p</td><td>필요가 해결되면 더 살 이유가 없음</td></tr>
+  </table></div>
+  <p class="note">식품은 자주 다시 사는 상품군이라 기본 행동률 자체가 14.7%로 가장 높다 (나머지 2.7~5.7%). 0.3%p 이상이면서 데이터를 반으로 나눠도 같은 방향일 때만 숫자로 표기했다.</p>
   <div class="concl"><b class="k">결론</b>
-    같은 별점 안에서 강한 감정 표현은 부정이든 긍정이든 후속 행동률이 높다. 같은 별점 안에서 평범한 표현은 후속 행동률이 가장 낮다.
-    5점은 표현의 크기가 후속 행동률에 관여하지 않는다.</div>
+    1~2점 불만, 3~4점 칭찬 16칸(4개 별점 조건 × 4개 상품군) 중 <b>15칸에서 약함·중간 세기가 가장 덜 돌아온다.</b>
+    위험 신호는 격한 감정이 아니라 <b>미지근한 감정</b>이다. 격하게 쓴 고객은 보통으로 쓴 고객보다 16칸 모두 더 돌아온다.<br>
+    다만 감정 표현이 없는 고객과 비교하면 열광의 효과는 상품군마다 반대다. 합치면 5점은 차이가 없어 보이지만,
+    상품군별로는 패션 +1.1%p, 뷰티 +0.6%p, 가전 -0.7%p로 갈린다.<br>
+    <b>→ 비교 기준을 먼저 정하고, 열광 고객 대응은 상품군별로 다르게: 패션·뷰티 신상품, 가전 소모품·액세서리, 식품 정기배송.</b></div>
 </div></section>
 
 <section id="summary"><div class="wrap">
   <h2>PART 01 종합</h2>
   <p class="sub">리뷰 신호로 고객을 나누면 다시 돌아올 고객과 아닌 고객이 갈린다. 그러나 리뷰 글로는 마음의 크기를 다 재지 못한다</p>
-  <div class="grid2">
-    <figure><img src="assets/summary_signal.png" alt="1~4점 고객을 별점, 글자수, 감정 세기로 나눈 상위 10%와 하위 10%의 1년 안 후속행동률" loading="lazy">
-      <figcaption>1~4점 고객 리뷰 신호 분석(전체 데이터). 상위 10%가 하위 10%보다 1.7배 더 돌아온다.</figcaption></figure>
-    <figure><img src="assets/summary_experience.png" alt="경험까지 더하면 하위 10% 후속행동률이 8.8%에서 6.4%로 내려간다" loading="lazy">
-      <figcaption>표본 12,000명(1~4점)에 리뷰 속 경험까지 더하면 '돌아오지 않을 고객'을 더 잘 골라낸다.</figcaption></figure>
-  </div>
+  <figure><img src="assets/summary_score.png" alt="돌아올 가능성 점수 상위·하위 10% 고객의 후속 리뷰 행동률. 전체 데이터 321만 명과 표본 12,000명" loading="lazy">
+    <figcaption>왼쪽(전체 데이터, 1~4점 321만 명): 별점만 쓸 때 상위·하위 10% 차이 1.44배 → 글자수·감정 세기를 더하면 1.66배.
+      오른쪽(표본 12,000명): 리뷰 속 경험까지 더하면 하위 10% 5.5% → 4.6%, 돌아오지 않을 고객을 17% 더 정확히 골라낸다 (17% = (5.52 − 4.60) ÷ 5.52).</figcaption></figure>
+  <p class="note">5점(611만 명)은 리뷰 글로 서로 구분되지 않아 점수에서 제외했다. 경험의 효과는 대부분 식품에서 나왔다 (식품 하위 10% 11.3% → 8.2%).
+    로지스틱 회귀, 전체 데이터 반분 검증, 표본 5겹 교차 검증 10회. 상관관계이며 인과가 아니다.</p>
   <div class="concl"><b class="k">PART 02로</b>리뷰는 주문의 일부에만 남고, 글로 드러난 감정은 겪은 일과 섞여 있다. 그래서 PART 02에서는
     <b>마음을 리뷰에서 추측하지 않고 구매 직후 설문으로 직접 묻고</b>, PART 01이 찾은 경험(회복, 배송 불만, 제품 칭찬)을 운영 기록으로 매일 잰다.</div>
+</div></section>
+
+<section id="crm"><div class="wrap">
+  <h2>찾은 신호를 행동으로: CRM 액션 3가지</h2>
+  <p class="sub">실망 · 미지근 · 열광 고객에게 언제, 무엇을 할지까지 정하고, 효과는 비교군으로 잰다</p>
+  <div class="tablewrap"><table>
+    <tr><th>대상</th><th>시점</th><th>내용</th><th>근거</th></tr>
+    <tr><td><b>실망 고객</b><br>1~2점, 문제 미해결</td><td>응답 후 24시간</td><td>교환·환불 지원 후 다음 주문 쿠폰<br>식품 맛 불만은 다른 제품 추천</td><td>문제 해결 시 5.5% → 7.8% (H3)</td></tr>
+    <tr><td><b>미지근한 고객</b><br>설문 '아주'가 아닌 응답</td><td>구매 후 2주</td><td>다음 주문 쿠폰 + 같은 상품군 추천</td><td>16칸 중 15칸에서 가장 덜 돌아옴 (H4)</td></tr>
+    <tr><td><b>열광 고객</b><br>4~5점 격한 칭찬</td><td>리뷰 후 2~4주</td><td>쿠폰 없이 상품군별 제안<br>패션·뷰티 신상품, 가전 소모품, 식품 정기배송</td><td>패션 4점 6.2% → 7.6% (H4)</td></tr>
+  </table></div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card"><h3>쿠폰은 필요한 곳에만</h3><p>쿠폰은 점수 하위 10%(4.6%)와 미지근한 고객에 집중하고, 상위 10%(7.8%)와 열광 고객에게는 쿠폰 없이 소식만 보낸다.</p></div>
+    <div class="card"><h3>효과는 비교군으로</h3><p>대상의 10%를 비교군으로 남겨 측정한다. 추가 매출 = 대상 고객 수 × 재구매율 상승폭 × 평균 주문액.
+      리뷰는 일부 고객만 쓰므로 같은 신호를 구매 후 설문(도착 3일 뒤, 7단계 객관식)으로 모은다.</p></div>
+  </div>
 </div></section>
 
 <div class="wrap part" id="part02"><div class="label">PART 02</div><h2>고객 감동 모니터링 대시보드</h2>
@@ -337,14 +418,12 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     재구성한 <b>합성 B2C 데이터</b>다 (2024-01-01부터 매일 생성, 2026-10-14 기준 고객 10,180명, 주문 15,583건). 화면에 보이는 효과는 PART 01 결과를 따라
     넣은 가정이며 새 발견이 아니다. 숫자보다 지표 설계와 화면 구조를 보여 준다.</div>
 
-  <div class="grid3">
+  <div class="grid2">
     <div class="card"><h3>감동 하트</h3>
       <p>무게 = ln(PART 01 오즈비), 만족 구간마다 다르다.<br>1~2점 문제 24시간 내 해결 +0.39 · 배송 불만 -0.24<br>3점 제품 칭찬 +0.09 · 배송 불만 -0.19<br>
         4점 제품 칭찬 +0.16 · 5점 무게 없음<br>합이 0보다 크면 긍정 울림, 작으면 부정 울림</p></div>
     <div class="card"><h3>다섯 화면</h3>
       <p>01 Overview(감동은 얼마나 차 있나) → 02 Deep Dive(무엇이 가르나) → 03 Risk &amp; Recovery(누구를 먼저 챙기나) → 04 고객 상세 → 05 Measurement Health(숫자를 믿어도 되나). 화면 사이는 클릭으로 이동한다.</p></div>
-    <div class="card"><h3>매일 쌓이는 데이터</h3>
-      <p>매일 07:00 어제까지의 주문을 자동으로 만들고 지표를 다시 계산한다. 기간(전체·최근 1년·6개월·90일)과 재구매 기간(30일·90일·180일·1년)을 고를 수 있다.</p></div>
   </div>
 
   <div id="vizBox" class="viz" hidden><iframe id="viz" title="고객 감동 모니터링 Tableau 대시보드" loading="lazy" allowfullscreen></iframe></div>
@@ -371,7 +450,9 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
       <li>재구매를 직접 보지 못한다 (후속 리뷰를 대리 지표로 씀)</li>
       <li>리뷰를 쓴 고객만 보인다</li>
       <li>AI 판정이 완벽하지 않을 수 있다</li>
-      <li>경험 분석에서 해당 경험을 가진 고객의 수가 적다</li></ul></div>
+      <li>경험 분석에서 해당 경험을 가진 고객의 수가 적다. 상품군당 1,000명 표본이라 상품군별 결론 대신 합친 결과의 방향을 결론으로 쓴다</li>
+      <li>5점은 리뷰 글로 서로 구분되지 않는다. 설문으로 직접 물어야 한다</li>
+      <li>모든 결과는 상관관계다. CRM 액션의 실제 효과는 비교군(A/B)으로 확인해야 한다</li></ul></div>
     <div class="card"><h3>PART 02</h3><ul>
       <li>데이터가 합성이라 숫자는 가정을 되풀이할 뿐이다</li>
       <li>나쁜 경험(지연, 오배송)은 운영 기록으로 늘 보이지만, 좋은 경험은 고객이 설문·리뷰로 말해 줘야 보인다. 긍정 울림의 약 70%가 설문에서 나오므로, 설문 응답률이 떨어지면 마음이 그대로여도 긍정 울림이 줄어든다</li>
@@ -388,7 +469,9 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:14px;border-top:1px soli
     <div class="card"><h3>사람이 검증한 것</h3><ul>
       <li>두 AI가 엇갈린 리뷰와 무작위 표본 <b>516건을 직접 판정</b>해 AI 판정과 비교</li>
       <li>그 결과로 <b>경험 사전(코드북) 수정</b>: 헷갈리는 경우를 규칙으로 고정하고 기준을 두 번 고침</li>
-      <li><b>감정 사전 수정</b>: 감정 세기 4단계 기준을 다듬고, 같은 단계를 감정 사전(NRC, VADER)과 강조 규칙으로 재현해 930만 명 전체에 적용</li></ul></div>
+      <li><b>감정 사전 수정</b>: 감정 세기 4단계 기준을 다듬고, 같은 단계를 감정 사전(NRC, VADER)과 강조 규칙으로 재현해 930만 명 전체에 적용.
+        단계 기준점은 AI 판정 16,000건과 가장 많이 일치하는 값으로 정함</li>
+      <li>두 AI가 함께 틀린 비율 11.7%를 기록해 한계로 밝힘</li></ul></div>
   </div>
 </div></section>
 </main>
